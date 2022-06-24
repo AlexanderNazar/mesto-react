@@ -33,11 +33,11 @@ function Main(props) {
           <div className="profile__info">
             <div className="profile__title">
               <h1 className="profile__name">{userName}</h1>
-              <button type="button" className="profile__edit-button" aria-label="Редактировать" onClick={props.onEditProfile}></button>
+              <button type="button" className="profile__edit-button" aria-label="Редактировать" onClick={props.onEditProfile} />
             </div>
             <p className="profile__about">{userDescription}</p>
           </div>
-          <button type="button" className="profile__add-button" aria-label="Добавить" onClick={props.onAddPlace}></button>
+          <button type="button" className="profile__add-button" aria-label="Добавить" onClick={props.onAddPlace} />
         </section>
         <section className="elements">
           {cards.map(card => <Card key={card._id} card={card} onCardClick={props.onCardClick} />)}

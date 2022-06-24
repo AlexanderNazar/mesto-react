@@ -11,7 +11,7 @@ function App() {
   const [editAvatarPopup, setEditAvatarPopup] = React.useState(false);
   const [editProfilePopup, setEditProfilePopup] = React.useState(false);
   const [addPlacePopup, setAddPlacePopup] = React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState('');
+  const [selectedCard, setSelectedCard] = React.useState(null);
 
   function isEditAvatarPopupOpen() {
     setEditAvatarPopup(true);
@@ -33,7 +33,7 @@ function App() {
     setEditAvatarPopup(false);
     setEditProfilePopup(false);
     setAddPlacePopup(false);
-    setSelectedCard('');
+    setSelectedCard(null);
   }
 
   return (
@@ -51,7 +51,7 @@ function App() {
           name="profile"
           title="Редактировать профиль"
           textButton="Сохранить"
-          isOpen={editProfilePopup ? "popup_opened" : ""}
+          isOpen={editProfilePopup}
           onClose={closeAllPopups}
           children={
             <>
@@ -64,7 +64,7 @@ function App() {
           name="add-image"
           title="Новое место"
           textButton="Создать"
-          isOpen={addPlacePopup ? "popup_opened" : ""}
+          isOpen={addPlacePopup}
           onClose={closeAllPopups}
           children={
             <>
@@ -77,7 +77,7 @@ function App() {
           name="update-avatar"
           title="Обновить аватар"
           textButton="Сохранить"
-          isOpen={editAvatarPopup ? "popup_opened" : ""}
+          isOpen={editAvatarPopup}
           onClose={closeAllPopups}
           children={
             <>
@@ -89,7 +89,6 @@ function App() {
           name="confirm"
           title="Вы уверены?"
           textButton="Да"
-          isOpen={1}
           onClose={closeAllPopups}
         />
         <PopupImageOpen card={selectedCard} onClose={closeAllPopups} />
