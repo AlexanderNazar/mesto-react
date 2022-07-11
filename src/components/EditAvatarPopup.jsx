@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, validDefault, setValidDefault, load, setLoad }) {
+function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, validDefault, setValidDefault, isLoading }) {
 
-  const [hasValid, setHasValid] = useState(true);
+  const [isValid, setIsValid] = useState(true);
   const [validText, setValidText] = useState('');
 
 
@@ -15,25 +15,26 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, validDefault, setVal
     onUpdateAvatar({
       avatar: avatarRef.current.value,
     });
-    setLoad();
   }
 
   function handleChangeInput(evt) {
-    setHasValid(evt.target.validity.valid);
+    setIsValid(evt.target.validity.valid);
     setValidText(evt.target.validationMessage);
     setValidDefault(evt.target.validity.valid);
   }
 
   function validityForm() {
-    return  validDefault && hasValid;
+    return  validDefault && isValid;
   }
 
   useEffect(() => {
     avatarRef.current.value = '';
+    setIsValid(true);
+    setValidText('');
   }, [isOpen]);
 
-  const valueTextButton = load ? "Сохранить" : "Сохранение...";
-  const inputClassName = hasValid ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
+  const valueTextButton = !isLoading ? "Сохранить" : "Сохранение...";
+  const inputClassName = isValid ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
 
   return (
     <PopupWithForm
@@ -43,7 +44,7 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, validDefault, setVal
     isOpen={isOpen}
     onClose={onClose}
     onSubmit={handleSubmit}
-    valid={validityForm()}
+    isValid={validityForm()}
     children={
       <>
         <input

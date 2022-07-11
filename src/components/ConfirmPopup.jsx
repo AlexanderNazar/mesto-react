@@ -1,17 +1,16 @@
 import { useState } from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function ConfirmPopup({ isOpen, onClose, onDeliteCard, load, setLoad }) {
+function ConfirmPopup({ isOpen, onClose, onDeliteCard, isLoading }) {
 
-  const [hasValid] = useState(true);
+  const [isValid] = useState(true);
 
   function handleSubmit(evt) {
     evt.preventDefault();
     onDeliteCard();
-    setLoad();
   }
 
-  const valueTextButton = load ? "Да" : "Удаление...";
+  const valueTextButton = !isLoading ? "Да" : "Удаление...";
 
   return (
     <PopupWithForm
@@ -21,7 +20,7 @@ function ConfirmPopup({ isOpen, onClose, onDeliteCard, load, setLoad }) {
     isOpen={isOpen}
     onClose={onClose}
     onSubmit={handleSubmit}
-    valid={hasValid} />
+    isValid={isValid} />
   )
 }
 

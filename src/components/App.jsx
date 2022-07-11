@@ -12,15 +12,15 @@ import ConfirmPopup from './ConfirmPopup';
 
 function App() {
 
-  const [hasEditAvatarPopup, setHasEditAvatarPopup] = useState(false);
-  const [hasEditProfilePopup, setHasEditProfilePopup] = useState(false);
-  const [hasAddPlacePopup, setHasAddPlacePopup] = useState(false);
-  const [hasConfirmPopup, setHasConfirmPopup] = useState(false);
+  const [isEditAvatarPopup, setIsEditAvatarPopup] = useState(false);
+  const [isEditProfilePopup, setIsEditProfilePopup] = useState(false);
+  const [isAddPlacePopup, setIsAddPlacePopup] = useState(false);
+  const [isConfirmPopup, setIsConfirmPopup] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
-  const [hasValidDefault, setHasValidDefault] = useState(false);
-  const [hasLoad, setHasLoad] = useState(true);
+  const [isValidDefault, setIsValidDefault] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [buffer, setBuffer] = useState([]);
 
   function getUserInfo() {
@@ -40,19 +40,16 @@ function App() {
     getInitialCards();
   }, [])
 
-  function isEditAvatarPopupOpen() {
-    setHasEditAvatarPopup(true);
-    setHasLoad(true);
+  function handleEditAvatarPopupOpen() {
+    setIsEditAvatarPopup(true);
   }
 
-  function isEditProfilePopupOpen() {
-    setHasEditProfilePopup(true);
-    setHasLoad(true);
+  function handleEditProfilePopupOpen() {
+    setIsEditProfilePopup(true);
   }
 
-  function isAddPlacePopupOpen() {
-    setHasAddPlacePopup(true);
-    setHasLoad(true);
+  function handleAddPlacePopupOpen() {
+    setIsAddPlacePopup(true);
   }
 
   function handleCardClick(card) {
@@ -60,51 +57,52 @@ function App() {
   }
 
   function closeAllPopups() {
-    setHasEditAvatarPopup(false);
-    setHasEditProfilePopup(false);
-    setHasAddPlacePopup(false);
-    setHasConfirmPopup(false);
+    setIsEditAvatarPopup(false);
+    setIsEditProfilePopup(false);
+    setIsAddPlacePopup(false);
+    setIsConfirmPopup(false);
     setSelectedCard(null);
-    setHasValidDefault(false);
+    setIsValidDefault(false);
   }
 
   function handleValid() {
-    setHasValidDefault(true);
+    setIsValidDefault(true);
   }
 
   function handleUpdateUser({ name, about }) {
+    setIsLoading(true);
     api.changeUserInfo({ name, about })
       .then(res => {
         setCurrentUser(res);
         closeAllPopups();
       })
       .catch(err => console.log(err))
+      .finally(() => setIsLoading(false))
   }
 
   function handleUpdateavatar({ avatar }) {
+    setIsLoading(true);
     api.updateAvatar({ avatar })
       .then(res => {
         setCurrentUser(res);
         closeAllPopups();
       })
       .catch(err => console.log(err))
-  }
-
-  function handleLoad() {
-    setHasLoad(false);
+      .finally(() => setIsLoading(false))
   }
 
   function handleConfirmPopup(card) {
-    setHasConfirmPopup(true)
+    setIsConfirmPopup(true)
     setBuffer(card);
-    setHasLoad(true);
   }
 
   function handleCardDelete() {
+    setIsLoading(true);
     api.deleteImage(buffer._id)
       .then(setCards(state => state.filter(c => c._id !== buffer._id)))
-      .catch(err => console.log(err));
-    setHasConfirmPopup(false);
+      .catch(err => console.log(err))
+      .finally(() => setIsLoading(false));
+    setIsConfirmPopup(false);
   }
 
   function handleCardLike(card) {
@@ -118,12 +116,14 @@ function App() {
   }
 
   function handleAddPlaceSubmit({ name, link }) {
+    setIsLoading(true);
     api.addCard({ name, link })
       .then(newCard => {
         setCards([newCard, ...cards]);
         closeAllPopups();
       })
       .catch(err => console.log(err))
+      .finally(() => setIsLoading(false))
   }
 
   return (
@@ -131,42 +131,38 @@ function App() {
       <div className="root">
         <Header />
           <Main
-            onEditAvatar={isEditAvatarPopupOpen}
-            onEditProfile={isEditProfilePopupOpen}
-            onAddPlace={isAddPlacePopupOpen}
+            onEditAvatar={handleEditAvatarPopupOpen}
+            onEditProfile={handleEditProfilePopupOpen}
+            onAddPlace={handleAddPlacePopupOpen}
             onCardClick={handleCardClick}
             onCardLike={handleCardLike}
             onCardDelete={handleConfirmPopup}
             cards={cards} />
         <Footer />
         <EditProfilePopup
-          isOpen={hasEditProfilePopup}
+          isOpen={isEditProfilePopup}
           onClose={closeAllPopups}
           onUpdateUser={handleUpdateUser}
-          load={hasLoad}
-          setLoad={handleLoad} />
+          isLoading={isLoading} />
         <AddPlacePopup
-          isOpen={hasAddPlacePopup}
+          isOpen={isAddPlacePopup}
           onClose={closeAllPopups}
           onAddPlace={handleAddPlaceSubmit}
-          validDefault={hasValidDefault}
+          validDefault={isValidDefault}
           setValidDefault={handleValid}
-          load={hasLoad}
-          setLoad={handleLoad} />
+          isLoading={isLoading} />
         <EditAvatarPopup
-          isOpen={hasEditAvatarPopup}
+          isOpen={isEditAvatarPopup}
           onClose={closeAllPopups}
           onUpdateAvatar={handleUpdateavatar}
-          validDefault={hasValidDefault}
+          validDefault={isValidDefault}
           setValidDefault={handleValid}
-          load={hasLoad}
-          setLoad={handleLoad} />
+          isLoading={isLoading} />
         <ConfirmPopup
-          isOpen={hasConfirmPopup}
+          isOpen={isConfirmPopup}
           onClose={closeAllPopups}
           onDeliteCard={handleCardDelete}
-          load={hasLoad}
-          setLoad={handleLoad} />
+          isLoading={isLoading} />
         <PopupImageOpen card={selectedCard} onClose={closeAllPopups} />
       </div>
     </CurrentUserContext.Provider>

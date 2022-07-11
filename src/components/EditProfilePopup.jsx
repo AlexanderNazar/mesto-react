@@ -2,29 +2,29 @@ import { useState, useEffect, useContext } from "react";
 import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function EditProfilePopup({ isOpen, onClose, onUpdateUser, load, setLoad }) {
+function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [hasValidName, setHasValidName] = useState(true);
-  const [hasValidDescription, setHasValidDescription] = useState(true);
+  const [isValidName, setIsValidName] = useState(true);
+  const [isValidDescription, setIsValidDescription] = useState(true);
   const [validTextName, setValidTextName] = useState('');
   const [validTextDescription, setValidTextDescription] = useState('');
 
   function handleChangeName(evt) {
     setName(evt.target.value);
-    setHasValidName(evt.target.validity.valid);
+    setIsValidName(evt.target.validity.valid);
     setValidTextName(evt.target.validationMessage);
   }
 
   function handleChangeDescription(evt) {
     setDescription(evt.target.value);
-    setHasValidDescription(evt.target.validity.valid);
+    setIsValidDescription(evt.target.validity.valid);
     setValidTextDescription(evt.target.validationMessage);
   }
 
   function validityForm() {
-    return hasValidName && hasValidDescription;
+    return isValidName && isValidDescription;
   }
 
   const currentUser = useContext(CurrentUserContext);
@@ -41,22 +41,21 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, load, setLoad }) {
       name,
       about: description,
     });
-    setLoad();
   }
 
   function closePopup(evt) {
     onClose();
     setName(currentUser.name);
     setDescription(currentUser.about);
-    setHasValidName(evt.target.validity.valid);
+    setIsValidName(evt.target.validity.valid);
     setValidTextName(evt.target.validationMessage)
-    setHasValidDescription(evt.target.validity.valid);
+    setIsValidDescription(evt.target.validity.valid);
     setValidTextDescription(evt.target.validationMessage);
   }
 
-  const valueTextButton = load ? "Сохранить" : "Сохранение...";
-  const inputNameClassName = hasValidName ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
-  const inputDescriptionClassName = hasValidDescription ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
+  const valueTextButton = !isLoading ? "Сохранить" : "Сохранение...";
+  const inputNameClassName = isValidName ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
+  const inputDescriptionClassName = isValidDescription ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
 
   return (
     <PopupWithForm
@@ -66,7 +65,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, load, setLoad }) {
           isOpen={isOpen}
           onClose={closePopup}
           onSubmit={handleSubmit}
-          valid={validityForm()}
+          isValid={validityForm()}
           children={
             <>
               <input
