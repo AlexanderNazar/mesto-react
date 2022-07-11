@@ -12,15 +12,15 @@ import ConfirmPopup from './ConfirmPopup';
 
 function App() {
 
-  const [editAvatarPopup, setEditAvatarPopup] = useState(false);
-  const [editProfilePopup, setEditProfilePopup] = useState(false);
-  const [addPlacePopup, setAddPlacePopup] = useState(false);
-  const [confirmPopup, setConfirmPopup] = useState(false);
+  const [hasEditAvatarPopup, setHasEditAvatarPopup] = useState(false);
+  const [hasEditProfilePopup, setHasEditProfilePopup] = useState(false);
+  const [hasAddPlacePopup, setHasAddPlacePopup] = useState(false);
+  const [hasConfirmPopup, setHasConfirmPopup] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
-  const [validDefault, setValidDefault] = useState(false);
-  const [load, setLoad] = useState(true);
+  const [hasValidDefault, setHasValidDefault] = useState(false);
+  const [hasLoad, setHasLoad] = useState(true);
   const [buffer, setBuffer] = useState([]);
 
   function getUserInfo() {
@@ -41,18 +41,18 @@ function App() {
   }, [])
 
   function isEditAvatarPopupOpen() {
-    setEditAvatarPopup(true);
-    setLoad(true);
+    setHasEditAvatarPopup(true);
+    setHasLoad(true);
   }
 
   function isEditProfilePopupOpen() {
-    setEditProfilePopup(true);
-    setLoad(true);
+    setHasEditProfilePopup(true);
+    setHasLoad(true);
   }
 
   function isAddPlacePopupOpen() {
-    setAddPlacePopup(true);
-    setLoad(true);
+    setHasAddPlacePopup(true);
+    setHasLoad(true);
   }
 
   function handleCardClick(card) {
@@ -60,16 +60,16 @@ function App() {
   }
 
   function closeAllPopups() {
-    setEditAvatarPopup(false);
-    setEditProfilePopup(false);
-    setAddPlacePopup(false);
-    setConfirmPopup(false);
+    setHasEditAvatarPopup(false);
+    setHasEditProfilePopup(false);
+    setHasAddPlacePopup(false);
+    setHasConfirmPopup(false);
     setSelectedCard(null);
-    setValidDefault(false);
+    setHasValidDefault(false);
   }
 
   function handleValid() {
-    setValidDefault(true);
+    setHasValidDefault(true);
   }
 
   function handleUpdateUser({ name, about }) {
@@ -91,20 +91,20 @@ function App() {
   }
 
   function handleLoad() {
-    setLoad(false);
+    setHasLoad(false);
   }
 
   function handleConfirmPopup(card) {
-    setConfirmPopup(true)
+    setHasConfirmPopup(true)
     setBuffer(card);
-    setLoad(true);
+    setHasLoad(true);
   }
 
   function handleCardDelete() {
     api.deleteImage(buffer._id)
       .then(setCards(state => state.filter(c => c._id !== buffer._id)))
       .catch(err => console.log(err));
-    setConfirmPopup(false);
+    setHasConfirmPopup(false);
   }
 
   function handleCardLike(card) {
@@ -140,32 +140,32 @@ function App() {
             cards={cards} />
         <Footer />
         <EditProfilePopup
-          isOpen={editProfilePopup}
+          isOpen={hasEditProfilePopup}
           onClose={closeAllPopups}
           onUpdateUser={handleUpdateUser}
-          load={load}
+          load={hasLoad}
           setLoad={handleLoad} />
         <AddPlacePopup
-          isOpen={addPlacePopup}
+          isOpen={hasAddPlacePopup}
           onClose={closeAllPopups}
           onAddPlace={handleAddPlaceSubmit}
-          validDefault={validDefault}
+          validDefault={hasValidDefault}
           setValidDefault={handleValid}
-          load={load}
+          load={hasLoad}
           setLoad={handleLoad} />
         <EditAvatarPopup
-          isOpen={editAvatarPopup}
+          isOpen={hasEditAvatarPopup}
           onClose={closeAllPopups}
           onUpdateAvatar={handleUpdateavatar}
-          validDefault={validDefault}
+          validDefault={hasValidDefault}
           setValidDefault={handleValid}
-          load={load}
+          load={hasLoad}
           setLoad={handleLoad} />
         <ConfirmPopup
-          isOpen={confirmPopup}
+          isOpen={hasConfirmPopup}
           onClose={closeAllPopups}
           onDeliteCard={handleCardDelete}
-          load={load}
+          load={hasLoad}
           setLoad={handleLoad} />
         <PopupImageOpen card={selectedCard} onClose={closeAllPopups} />
       </div>

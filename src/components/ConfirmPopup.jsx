@@ -1,27 +1,27 @@
 import { useState } from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function ConfirmPopup(props) {
+function ConfirmPopup({ isOpen, onClose, onDeliteCard, load, setLoad }) {
 
-  const [valid] = useState(true);
+  const [hasValid] = useState(true);
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    props.onDeliteCard();
-    props.setLoad();
+    onDeliteCard();
+    setLoad();
   }
 
-  const valueTextButton = props.load ? "Да" : "Удаление...";
+  const valueTextButton = load ? "Да" : "Удаление...";
 
   return (
     <PopupWithForm
     name="confirm"
     title="Вы уверены?"
     textButton={valueTextButton}
-    isOpen={props.isOpen}
-    onClose={props.onClose}
+    isOpen={isOpen}
+    onClose={onClose}
     onSubmit={handleSubmit}
-    valid={valid} />
+    valid={hasValid} />
   )
 }
 

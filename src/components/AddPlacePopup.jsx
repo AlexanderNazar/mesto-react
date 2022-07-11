@@ -1,51 +1,54 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function AddPlacePopup(props) {
+function AddPlacePopup({ isOpen, onClose, onAddPlace, validDefault, setValidDefault, load, setLoad }) {
 
-  const [name, setName] = useState();
-  const [link, setLink] = useState();
-  const [validName, setValidName] = useState(true);
-  const [validLink, setValidLink] = useState(true);
+  const [name, setName] = useState('');
+  const [link, setLink] = useState('');
+  const [hasValidName, setHasValidName] = useState(true);
+  const [hasValidLink, setHasValidLink] = useState(true);
   const [validTextName, setValidTextName] = useState('');
   const [validTextLink, setValidTextLink] = useState('');
 
   function handleChangeName(evt) {
     setName(evt.target.value);
-    setValidName(evt.target.validity.valid);
+    setHasValidName(evt.target.validity.valid);
     setValidTextName(evt.target.validationMessage);
   }
 
   function handleChangeLink(evt) {
     setLink(evt.target.value);
-    setValidLink(evt.target.validity.valid);
+    setHasValidLink(evt.target.validity.valid);
     setValidTextLink(evt.target.validationMessage);
-    props.setValidDefault();
+    setValidDefault();
   }
 
   function validityForm() {
-    return  props.validDefault && validName && validLink;
+    return  validDefault && hasValidName && hasValidLink;
   }
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    props.onAddPlace({ name, link });
-    setName('');
-    setLink('');
-    props.setLoad();
+    onAddPlace({ name, link });
+    setLoad();
   }
 
-  const valueTextButton = props.load ? "Создать" : "Сохранение...";
-  const inputNameClassName = validName ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
-  const inputLinkClassName = validLink ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
+  useEffect(() => {
+    setName('');
+    setLink('');
+  }, [isOpen]);
+
+  const valueTextButton = load ? "Создать" : "Сохранение...";
+  const inputNameClassName = hasValidName ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
+  const inputLinkClassName = hasValidLink ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
 
   return (
     <PopupWithForm
     name="add-image"
     title="Новое место"
     textButton={valueTextButton}
-    isOpen={props.isOpen}
-    onClose={props.onClose}
+    isOpen={isOpen}
+    onClose={onClose}
     onSubmit={handleSubmit}
     valid={validityForm()}
     children={
@@ -59,7 +62,7 @@ function AddPlacePopup(props) {
           placeholder="Название"
           minLength="2"
           maxLength="30"
-          value={name ? name : ""}
+          value={name || ""}
           onChange={handleChangeName} />
         <span id="place-error" className="popup__error">{validTextName}</span>
         <input
@@ -69,7 +72,7 @@ function AddPlacePopup(props) {
           name="link"
           required
           placeholder="Ссылка на картинку"
-          value={link ? link : ""}
+          value={link || ""}
           onChange={handleChangeLink} />
         <span id="link-error" className="popup__error">{validTextLink}</span>
       </>

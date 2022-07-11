@@ -2,29 +2,29 @@ import { useState, useEffect, useContext } from "react";
 import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-function EditProfilePopup(props) {
+function EditProfilePopup({ isOpen, onClose, onUpdateUser, load, setLoad }) {
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [validName, setValidName] = useState(true);
-  const [validDescription, setValidDescription] = useState(true);
+  const [hasValidName, setHasValidName] = useState(true);
+  const [hasValidDescription, setHasValidDescription] = useState(true);
   const [validTextName, setValidTextName] = useState('');
   const [validTextDescription, setValidTextDescription] = useState('');
 
   function handleChangeName(evt) {
     setName(evt.target.value);
-    setValidName(evt.target.validity.valid);
+    setHasValidName(evt.target.validity.valid);
     setValidTextName(evt.target.validationMessage);
   }
 
   function handleChangeDescription(evt) {
     setDescription(evt.target.value);
-    setValidDescription(evt.target.validity.valid);
+    setHasValidDescription(evt.target.validity.valid);
     setValidTextDescription(evt.target.validationMessage);
   }
 
   function validityForm() {
-    return validName && validDescription;
+    return hasValidName && hasValidDescription;
   }
 
   const currentUser = useContext(CurrentUserContext);
@@ -37,33 +37,33 @@ function EditProfilePopup(props) {
   function handleSubmit(evt) {
     evt.preventDefault();
 
-    props.onUpdateUser({
+    onUpdateUser({
       name,
       about: description,
     });
-    props.setLoad();
+    setLoad();
   }
 
   function closePopup(evt) {
-    props.onClose();
+    onClose();
     setName(currentUser.name);
     setDescription(currentUser.about);
-    setValidName(evt.target.validity.valid);
+    setHasValidName(evt.target.validity.valid);
     setValidTextName(evt.target.validationMessage)
-    setValidDescription(evt.target.validity.valid);
+    setHasValidDescription(evt.target.validity.valid);
     setValidTextDescription(evt.target.validationMessage);
   }
 
-  const valueTextButton = props.load ? "Сохранить" : "Сохранение...";
-  const inputNameClassName = validName ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
-  const inputDescriptionClassName = validDescription ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
+  const valueTextButton = load ? "Сохранить" : "Сохранение...";
+  const inputNameClassName = hasValidName ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
+  const inputDescriptionClassName = hasValidDescription ? "popup__input-text" : "popup__input-text popup__input-text_type_error";
 
   return (
     <PopupWithForm
           name="profile"
           title="Редактировать профиль"
           textButton={valueTextButton}
-          isOpen={props.isOpen}
+          isOpen={isOpen}
           onClose={closePopup}
           onSubmit={handleSubmit}
           valid={validityForm()}
